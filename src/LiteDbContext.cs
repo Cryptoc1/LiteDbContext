@@ -16,7 +16,9 @@ public abstract class LiteDbContext : IAsyncDisposable
         _ = ProcessWorkQueue( queue, cancellation.Token );
     }
 
-    protected LiteDbSetBuilder<T> DbSet<T>( [CallerMemberName] string? name = default ) => new( database, name, queue );
+    protected LiteDbSet<T> DbSet<T>( [CallerMemberName] string? name = default ) => new(
+        database.GetCollection<T>( name ),
+        queue );
 
     public async ValueTask DisposeAsync( )
     {
@@ -47,47 +49,4 @@ public abstract class LiteDbContext : IAsyncDisposable
             }
         }
     }
-}
-
-public sealed class LiteDbSetBuilder<T>
-{
-    private readonly ILiteDatabase database;
-    private readonly DbWorkQueue queue;
-
-    private string? name;
-    private Action<ILiteCollection<T>>? onCreating;
-
-    internal LiteDbSetBuilder( ILiteDatabase database, string? name, DbWorkQueue queue )
-    {
-        this.database = database;
-        this.queue = queue;
-
-        this.name = name;
-    }
-
-    public LiteDbSet<T> Build( )
-    {
-        var collection = database.GetCollection<T>( name );
-        onCreating?.Invoke( collection );
-
-        return new LiteDbSet<T>( collection, queue );
-    }
-
-    public LiteDbSetBuilder<T> OnCreatingCollection( Action<ILiteCollection<T>> onCreating )
-    {
-        ArgumentNullException.ThrowIfNull( onCreating );
-
-        this.onCreating = onCreating;
-        return this;
-    }
-
-    public LiteDbSetBuilder<T> WithName( string name )
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace( name );
-
-        this.name = name;
-        return this;
-    }
-
-    public static implicit operator LiteDbSet<T>( LiteDbSetBuilder<T> builder ) => builder.Build();
 }

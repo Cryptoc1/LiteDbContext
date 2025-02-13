@@ -24,26 +24,10 @@ using LiteDB;
 
 // ...
 
-public sealed class ExampleDbContext : LiteDbContext
+public sealed class ExampleDbContext(LiteDbOptions options) : LiteDbContext(options)
 {
-    public LiteDbSet<ExampleEntity> Examples { get; }
-
-    public ExampleDbContext(LiteDbOptions options) : base(options)
-    {
-        Examples = DbSet<ExampleEntity>()
-            .OnCreatingCollection(OnCreatingExamples)
-
-            /*
-            * Override the collection name.
-            * default: `PropertyInfo.Name`, provided to `DbSet<T>()` via `[CallerMemberName]`
-            */
-            .WithName("examples");
-    }
-
-    private static void OnCreatingExamples(ILiteCollection<ExampleEntity> collection)
-    {
-        collection.EnsureIndex(example => example.Value);
-    }
+    // NOTE: if a `name` is not provided to `DbSet<T>(string? name)`, `[CallerMemberName]` will provide the `PropertyInfo.Name` for you, e.g. `Examples`
+    public LiteDbSet<ExampleEntity> Examples => DbSet<ExampleEntity>();
 }
 
 public sealed record class ExampleEntity
