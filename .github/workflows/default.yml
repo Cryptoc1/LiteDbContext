@@ -14,6 +14,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  checks: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
