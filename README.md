@@ -1,6 +1,16 @@
-# LiteDbContext
+<h1 align="center">LiteDbContext</h1>
 
-A light-weight async wrapper around [LiteDB](https://github.com/litedb-org/LiteDB).
+<div align="center">
+
+*A light-weight async wrapper around [LiteDB](https://github.com/litedb-org/LiteDB)*
+
+![Language](https://img.shields.io/github/languages/top/cryptoc1/LiteDbContext)
+[![Dependencies](https://img.shields.io/librariesio/github/cryptoc1/LiteDbContext)](https://libraries.io/nuget/LiteDbContext)
+[![Checks](https://img.shields.io/github/checks-status/cryptoc1/LiteDbContext/develop)](https://github.com/Cryptoc1/LiteDbContext/actions/workflows/default.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/cryptoc1/LiteDbContext)](https://app.codecov.io/gh/Cryptoc1/LiteDbContext/)
+[![Version](https://img.shields.io/nuget/vpre/LiteDbContext)](https://www.nuget.org/packages/LiteDbContext)
+
+</div>
 
 ### Key Features:
 - Modern C#
