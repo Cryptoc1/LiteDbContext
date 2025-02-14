@@ -15,7 +15,9 @@ public static class LiteDbContextServiceExtensions
         ArgumentNullException.ThrowIfNull( services );
         ArgumentNullException.ThrowIfNull( configure );
 
-        var options = services.AddOptions<LiteDbOptions<TContext>>();
+        var options = services.AddOptions<LiteDbOptions<TContext>>()
+            .Validate( options => !string.IsNullOrEmpty( options.ConnectionString ), "A connection string is required!" );
+
         if( configure is not null )
         {
             options.Configure( configure );
