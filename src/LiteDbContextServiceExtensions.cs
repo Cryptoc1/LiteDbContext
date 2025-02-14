@@ -13,7 +13,6 @@ public static class LiteDbContextServiceExtensions
         where TContext : LiteDbContext
     {
         ArgumentNullException.ThrowIfNull( services );
-        ArgumentNullException.ThrowIfNull( configure );
 
         var options = services.AddOptions<LiteDbOptions<TContext>>()
             .Validate( options => !string.IsNullOrEmpty( options.ConnectionString ), "A connection string is required!" );
