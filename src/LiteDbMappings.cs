@@ -29,7 +29,23 @@ public static class LiteDbMappings
             value =>
             {
 #pragma warning disable IL2026,IL3050
-                return System.Text.Json.JsonSerializer.Deserialize<JsonElement>( JsonSerializer.Serialize( value ) );
+                return System.Text.Json.JsonSerializer.Deserialize<JsonElement>(
+                    JsonSerializer.Serialize( value ) );
+#pragma warning restore IL2026,IL3050
+            } );
+
+        mapper.RegisterType<JsonElement?>(
+            element => element.HasValue ? JsonSerializer.Deserialize( element.Value.GetRawText() ) : BsonValue.Null,
+            value =>
+            {
+                if( value.IsNull )
+                {
+                    return default;
+                }
+
+#pragma warning disable IL2026,IL3050
+                return System.Text.Json.JsonSerializer.Deserialize<JsonElement>(
+                    JsonSerializer.Serialize( value ) );
 #pragma warning restore IL2026,IL3050
             } );
 
@@ -56,8 +72,12 @@ public static class LiteDbMappings
         ArgumentNullException.ThrowIfNull( mapper );
 
         mapper.RegisterType(
-            url => url is null ? BsonValue.Null : new BsonValue( url?.OriginalString ),
+            url => new( url?.OriginalString ),
             value => new UriBuilder( value.AsString ).Uri );
+
+        mapper.RegisterType(
+            url => url is not null ? new( url?.OriginalString ) : BsonValue.Null,
+            value => !value.IsNull ? new UriBuilder( value.AsString ).Uri : default );
 
         return mapper;
     }
