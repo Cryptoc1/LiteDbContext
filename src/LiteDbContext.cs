@@ -8,10 +8,15 @@ public abstract class LiteDbContext : IAsyncDisposable
     private readonly LiteDatabase database;
     private readonly DbWorkQueue queue;
 
+    public BsonMapper Mapper => database.Mapper;
+
     protected LiteDbContext( LiteDbOptions options )
     {
         queue = new();
-        database = new( options.ConnectionString, options.Mapper );
+        database = new( options.ConnectionString, options.Mapper )
+        {
+            UserVersion = options.UserVersion,
+        };
 
         _ = ProcessWorkQueue( queue, cancellation.Token );
     }

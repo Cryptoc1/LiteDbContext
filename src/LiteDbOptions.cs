@@ -9,6 +9,8 @@ public class LiteDbOptions
         .ConfigureJson()
         .ConfigureTime()
         .ConfigureUris();
+
+    public int UserVersion { get; set; }
 }
 
 public class LiteDbOptions<TContext> : LiteDbOptions
