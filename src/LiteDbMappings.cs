@@ -72,12 +72,25 @@ public static class LiteDbMappings
         ArgumentNullException.ThrowIfNull( mapper );
 
         mapper.RegisterType(
-            url => new( url?.OriginalString ),
+            url => new( url.OriginalString ),
             value => new UriBuilder( value.AsString ).Uri );
 
         mapper.RegisterType(
-            url => url is not null ? new( url?.OriginalString ) : BsonValue.Null,
-            value => !value.IsNull ? new UriBuilder( value.AsString ).Uri : default );
+            url => url is not null ? new( url.OriginalString ) : BsonValue.Null,
+            value =>
+            {
+                if( value.IsNull )
+                {
+                    return default;
+                }
+
+                if( string.IsNullOrWhiteSpace( value.AsString ) )
+                {
+                    return default;
+                }
+
+                return new UriBuilder( value.AsString ).Uri;
+            } );
 
         return mapper;
     }
