@@ -1,6 +1,4 @@
-using System.Linq.Expressions;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace LiteDB;
 
@@ -40,7 +38,8 @@ public static class LiteDbMappings
             {
 #pragma warning disable IL2026,IL3050
                 return System.Text.Json.JsonSerializer.Deserialize<JsonElement>(
-                    JsonSerializer.Serialize( value ) );
+                    JsonSerializer.Serialize( value ),
+                    options );
 #pragma warning restore IL2026,IL3050
             } );
 
@@ -66,7 +65,8 @@ public static class LiteDbMappings
 
 #pragma warning disable IL2026,IL3050
                 return System.Text.Json.JsonSerializer.Deserialize<JsonElement>(
-                    JsonSerializer.Serialize( value ) );
+                    JsonSerializer.Serialize( value ),
+                    options );
 #pragma warning restore IL2026,IL3050
             } );
 
