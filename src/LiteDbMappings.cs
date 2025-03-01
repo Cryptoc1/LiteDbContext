@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace LiteDB;
 
@@ -19,13 +21,21 @@ public static class LiteDbMappings
         return mapper;
     }
 
-    public static BsonMapper ConfigureJson( this BsonMapper mapper )
+    public static BsonMapper ConfigureJson( this BsonMapper mapper, JsonSerializerOptions? options = default )
     {
         ArgumentNullException.ThrowIfNull( mapper );
 
+        options ??= new( JsonSerializerDefaults.General );
+
         // TODO: translate via DOM api, rather than via serialization?
         mapper.RegisterType(
-            element => JsonSerializer.Deserialize( element.GetRawText() ),
+            element =>
+            {
+#pragma warning disable IL2026,IL3050
+                return JsonSerializer.Deserialize(
+                    System.Text.Json.JsonSerializer.Serialize( element, options ) );
+#pragma warning restore IL2026,IL3050
+            },
             value =>
             {
 #pragma warning disable IL2026,IL3050
@@ -35,7 +45,18 @@ public static class LiteDbMappings
             } );
 
         mapper.RegisterType<JsonElement?>(
-            element => element.HasValue ? JsonSerializer.Deserialize( element.Value.GetRawText() ) : BsonValue.Null,
+            element =>
+            {
+                if( element.HasValue )
+                {
+#pragma warning disable IL2026, IL3050
+                    return JsonSerializer.Deserialize(
+                        System.Text.Json.JsonSerializer.Serialize( element, options ) );
+#pragma warning restore IL2026,IL3050
+                }
+
+                return BsonValue.Null;
+            },
             value =>
             {
                 if( value.IsNull )
@@ -73,7 +94,15 @@ public static class LiteDbMappings
 
         mapper.RegisterType(
             url => new( url.OriginalString ),
-            value => new UriBuilder( value.AsString ).Uri );
+            value =>
+            {
+                if( Uri.TryCreate( value.AsString, UriKind.RelativeOrAbsolute, out var url ) )
+                {
+                    return url;
+                }
+
+                return new UriBuilder( value.AsString ).Uri;
+            } );
 
         mapper.RegisterType(
             url => url is not null ? new( url.OriginalString ) : BsonValue.Null,
@@ -87,6 +116,11 @@ public static class LiteDbMappings
                 if( string.IsNullOrWhiteSpace( value.AsString ) )
                 {
                     return default;
+                }
+
+                if( Uri.TryCreate( value.AsString, UriKind.RelativeOrAbsolute, out var url ) )
+                {
+                    return url;
                 }
 
                 return new UriBuilder( value.AsString ).Uri;
