@@ -16,6 +16,7 @@ public abstract class LiteDbContext : IAsyncDisposable
         database = new( options.ConnectionString, options.Mapper )
         {
             UserVersion = options.UserVersion,
+            UtcDate = true,
         };
 
         _ = ProcessWorkQueue( queue, cancellation.Token );

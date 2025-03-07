@@ -16,6 +16,14 @@ public static class LiteDbMappings
             date => date.HasValue ? new BsonValue( date.Value.ToDateTime( TimeOnly.MinValue ) ) : BsonValue.Null,
             value => value.IsNull ? default : DateOnly.FromDateTime( value.AsDateTime ) );
 
+        mapper.RegisterType<DateTime?>(
+            date => date.HasValue ? new BsonValue( date.Value.ToUniversalTime() ) : BsonValue.Null,
+            value => !value.IsNull && value.IsDateTime ? value.AsDateTime : default );
+
+        mapper.RegisterType<DateTimeOffset?>(
+            date => date.HasValue ? new BsonValue( date.Value.UtcDateTime ) : BsonValue.Null,
+            value => !value.IsNull && value.IsDateTime ? value.AsDateTime : default );
+
         return mapper;
     }
 
