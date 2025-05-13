@@ -10,7 +10,7 @@ public class LiteDbOptions
         .ConfigureTime()
         .ConfigureUris();
 
-    public int UserVersion { get; set; }
+    public Action<LiteDatabase>? OnCreating { get; set; }
 }
 
 public class LiteDbOptions<TContext> : LiteDbOptions

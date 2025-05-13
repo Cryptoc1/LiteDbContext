@@ -42,8 +42,8 @@ internal sealed class DbWorkQueue
         {
             try
             {
-                var result = await work( cancellation ).ConfigureAwait( false );
-                completion.SetResult( result );
+                completion.SetResult(
+                    await work( cancellation ).ConfigureAwait( false ) );
             }
             catch( Exception e )
             {
@@ -58,7 +58,6 @@ internal sealed class DbWorkQueue
     }
 
     public ValueTask<DbWork> ReadAsync( CancellationToken cancellation ) => queue.Reader.ReadAsync( cancellation );
-    public ValueTask WriteAsync( DbWork work, CancellationToken cancellation ) => queue.Writer.WriteAsync( work, cancellation );
 }
 
 internal sealed class DbWork( Func<CancellationToken, ValueTask> work, CancellationToken cancellation )

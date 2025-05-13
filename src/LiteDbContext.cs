@@ -15,10 +15,10 @@ public abstract class LiteDbContext : IAsyncDisposable
         queue = new();
         database = new( options.ConnectionString, options.Mapper )
         {
-            UserVersion = options.UserVersion,
             UtcDate = true,
         };
 
+        options.OnCreating?.Invoke( database );
         _ = ProcessWorkQueue( queue, cancellation.Token );
     }
 
@@ -52,6 +52,8 @@ public abstract class LiteDbContext : IAsyncDisposable
             if( work is not null )
             {
                 await work.Invoke( cancellation ).ConfigureAwait( false );
+
+                await Task.Yield();
             }
         }
     }
