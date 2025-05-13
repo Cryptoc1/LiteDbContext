@@ -7,7 +7,7 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/LiteDbContext.sln",
+        "${workspaceFolder}/LiteDbContext.slnx",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],

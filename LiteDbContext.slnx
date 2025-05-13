@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/LiteDbContext.csproj" />
+  <Project Path="test/LiteDbContext.Tests.csproj" />
+</Solution>

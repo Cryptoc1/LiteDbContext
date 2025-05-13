@@ -12,7 +12,7 @@
   "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution",
   "dotnet.codeLens.enableReferencesCodeLens": false,
   "dotnet.codeLens.enableTestsCodeLens": false,
-  "dotnet.defaultSolution": "LiteDbContext.sln",
+  "dotnet.defaultSolution": "LiteDbContext.slnx",
   "dotnet.navigation.navigateToDecompiledSources": true,
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
