@@ -100,7 +100,6 @@ internal static class DbWorkQueueExtensions
             foreach( var value in factory() )
             {
                 await channel.Writer.WriteAsync( value, cancellation );
-                cancellation.ThrowIfCancellationRequested();
             }
         }, cancellation ).ContinueWith( _ => channel.Writer.Complete( _.Exception ), CancellationToken.None );
 

@@ -39,7 +39,6 @@ internal sealed class LiteDbResult<T>( ILiteQueryableResult<T> result, DbWorkQue
             while( reader.Read() )
             {
                 await channel.Writer.WriteAsync( reader.Current, cancellation );
-                cancellation.ThrowIfCancellationRequested();
             }
         }, cancellation ).ContinueWith( _ => channel.Writer.Complete( _.Exception ), CancellationToken.None );
 
@@ -47,7 +46,7 @@ internal sealed class LiteDbResult<T>( ILiteQueryableResult<T> result, DbWorkQue
     }
 
     public IAsyncEnumerable<T> ToAsyncEnumerable( CancellationToken cancellation = default ) => queue.EnumerateAsync(
-        ( ) => result.ToEnumerable(),
+        result.ToEnumerable,
         cancellation );
 
     public Task<int> IntoAsync( string collection, BsonAutoId autoId = BsonAutoId.ObjectId, CancellationToken cancellation = default ) => queue.InvokeAsync(
