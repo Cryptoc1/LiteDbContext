@@ -19,7 +19,7 @@ public abstract class LiteDbContext : IAsyncDisposable
         };
 
         options.OnCreating?.Invoke( database );
-        _ = ProcessWorkQueue( queue, cancellation.Token );
+        _ = Task.Run( ( ) => ProcessWorkQueue( queue, cancellation.Token ), cancellation.Token );
     }
 
     protected LiteDbSet<T> DbSet<T>( [CallerMemberName] string? name = default ) => new(
