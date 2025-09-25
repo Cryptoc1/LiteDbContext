@@ -77,8 +77,8 @@
       },
       "LiteDB": {
         "type": "Transitive",
-        "resolved": "5.0.21",
-        "contentHash": "ykJ7ffFl7P9YQKR/PLci6zupiLrsSCNkOTiw6OtzntH7d2kCYp5L1+3a/pksKgTEHcJBoPXFtg7VZSGVBseN9w==",
+        "resolved": "6.0.0-prerelease.9.10.5",
+        "contentHash": "KUYanIPZI3UUcuXITPhNZUFpQelvHOZcCMn6rAo1H9fGPS57stvqo+PGFgQ3Jj765omKVkAuzn27crvAIEp4YA==",
         "dependencies": {
           "System.Buffers": "4.5.1"
         }
@@ -195,7 +195,7 @@
       "litedbcontext": {
         "type": "Project",
         "dependencies": {
-          "LiteDB": "[5.0.21, )",
+          "LiteDB": "[6.0.0-prerelease.9.10.5, )",
           "Microsoft.Extensions.Options": "[8.0.2, )"
         }
       }
@@ -276,8 +276,8 @@
       },
       "LiteDB": {
         "type": "Transitive",
-        "resolved": "5.0.21",
-        "contentHash": "ykJ7ffFl7P9YQKR/PLci6zupiLrsSCNkOTiw6OtzntH7d2kCYp5L1+3a/pksKgTEHcJBoPXFtg7VZSGVBseN9w==",
+        "resolved": "6.0.0-prerelease.9.10.5",
+        "contentHash": "KUYanIPZI3UUcuXITPhNZUFpQelvHOZcCMn6rAo1H9fGPS57stvqo+PGFgQ3Jj765omKVkAuzn27crvAIEp4YA==",
         "dependencies": {
           "System.Buffers": "4.5.1"
         }
@@ -394,7 +394,7 @@
       "litedbcontext": {
         "type": "Project",
         "dependencies": {
-          "LiteDB": "[5.0.21, )",
+          "LiteDB": "[6.0.0-prerelease.9.10.5, )",
           "Microsoft.Extensions.Options": "[9.0.9, )"
         }
       }
