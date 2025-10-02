@@ -4,9 +4,9 @@
     "net8.0": {
       "LiteDB": {
         "type": "Direct",
-        "requested": "[6.0.0-prerelease.9.10.5, )",
-        "resolved": "6.0.0-prerelease.9.10.5",
-        "contentHash": "KUYanIPZI3UUcuXITPhNZUFpQelvHOZcCMn6rAo1H9fGPS57stvqo+PGFgQ3Jj765omKVkAuzn27crvAIEp4YA==",
+        "requested": "[6.0.0-prerelease.55, )",
+        "resolved": "6.0.0-prerelease.55",
+        "contentHash": "DM5XZeLbeeBvAlutXxBVAJXjXkeGCzDOfPhVhEZa81JxPxSrtfmcGHztWH6BzzunrvDvFdLSSydFbakSkIMMwA==",
         "dependencies": {
           "System.Buffers": "4.5.1"
         }
@@ -78,9 +78,9 @@
     "net9.0": {
       "LiteDB": {
         "type": "Direct",
-        "requested": "[6.0.0-prerelease.9.10.5, )",
-        "resolved": "6.0.0-prerelease.9.10.5",
-        "contentHash": "KUYanIPZI3UUcuXITPhNZUFpQelvHOZcCMn6rAo1H9fGPS57stvqo+PGFgQ3Jj765omKVkAuzn27crvAIEp4YA==",
+        "requested": "[6.0.0-prerelease.55, )",
+        "resolved": "6.0.0-prerelease.55",
+        "contentHash": "DM5XZeLbeeBvAlutXxBVAJXjXkeGCzDOfPhVhEZa81JxPxSrtfmcGHztWH6BzzunrvDvFdLSSydFbakSkIMMwA==",
         "dependencies": {
           "System.Buffers": "4.5.1"
         }

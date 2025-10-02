@@ -71,14 +71,14 @@
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[3.1.4, )",
-        "resolved": "3.1.4",
-        "contentHash": "5mj99LvCqrq3CNi06xYdyIAXOEh+5b33F2nErCzI5zWiDdLHXiPXEWFSUAF8zlIv0ZWqjZNCwHTQeAPYbF3pCg=="
+        "requested": "[3.1.5, )",
+        "resolved": "3.1.5",
+        "contentHash": "tKi7dSTwP4m5m9eXPM2Ime4Kn7xNf4x4zT9sdLO/G4hZVnQCRiMTWoSZqI/pYTVeI27oPPqHBKYI/DjJ9GsYgA=="
       },
       "LiteDB": {
         "type": "Transitive",
-        "resolved": "6.0.0-prerelease.9.10.5",
-        "contentHash": "KUYanIPZI3UUcuXITPhNZUFpQelvHOZcCMn6rAo1H9fGPS57stvqo+PGFgQ3Jj765omKVkAuzn27crvAIEp4YA==",
+        "resolved": "6.0.0-prerelease.55",
+        "contentHash": "DM5XZeLbeeBvAlutXxBVAJXjXkeGCzDOfPhVhEZa81JxPxSrtfmcGHztWH6BzzunrvDvFdLSSydFbakSkIMMwA==",
         "dependencies": {
           "System.Buffers": "4.5.1"
         }
@@ -195,7 +195,7 @@
       "litedbcontext": {
         "type": "Project",
         "dependencies": {
-          "LiteDB": "[6.0.0-prerelease.9.10.5, )",
+          "LiteDB": "[6.0.0-prerelease.55, )",
           "Microsoft.Extensions.Options": "[8.0.2, )"
         }
       }
@@ -270,14 +270,14 @@
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[3.1.4, )",
-        "resolved": "3.1.4",
-        "contentHash": "5mj99LvCqrq3CNi06xYdyIAXOEh+5b33F2nErCzI5zWiDdLHXiPXEWFSUAF8zlIv0ZWqjZNCwHTQeAPYbF3pCg=="
+        "requested": "[3.1.5, )",
+        "resolved": "3.1.5",
+        "contentHash": "tKi7dSTwP4m5m9eXPM2Ime4Kn7xNf4x4zT9sdLO/G4hZVnQCRiMTWoSZqI/pYTVeI27oPPqHBKYI/DjJ9GsYgA=="
       },
       "LiteDB": {
         "type": "Transitive",
-        "resolved": "6.0.0-prerelease.9.10.5",
-        "contentHash": "KUYanIPZI3UUcuXITPhNZUFpQelvHOZcCMn6rAo1H9fGPS57stvqo+PGFgQ3Jj765omKVkAuzn27crvAIEp4YA==",
+        "resolved": "6.0.0-prerelease.55",
+        "contentHash": "DM5XZeLbeeBvAlutXxBVAJXjXkeGCzDOfPhVhEZa81JxPxSrtfmcGHztWH6BzzunrvDvFdLSSydFbakSkIMMwA==",
         "dependencies": {
           "System.Buffers": "4.5.1"
         }
@@ -394,7 +394,7 @@
       "litedbcontext": {
         "type": "Project",
         "dependencies": {
-          "LiteDB": "[6.0.0-prerelease.9.10.5, )",
+          "LiteDB": "[6.0.0-prerelease.55, )",
           "Microsoft.Extensions.Options": "[9.0.9, )"
         }
       }
