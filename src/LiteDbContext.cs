@@ -10,6 +10,8 @@ public abstract class LiteDbContext : IAsyncDisposable
 
     public BsonMapper Mapper => database.Mapper;
 
+    private Task? worker;
+
     protected LiteDbContext( LiteDbOptions options )
     {
         queue = new();
@@ -19,7 +21,7 @@ public abstract class LiteDbContext : IAsyncDisposable
         };
 
         options.OnCreating?.Invoke( database );
-        _ = Task.Run( ( ) => ProcessWorkQueue( queue, cancellation.Token ), cancellation.Token );
+        worker = Task.Run( ( ) => ProcessWorkQueue( queue, cancellation.Token ), cancellation.Token );
     }
 
     protected LiteDbSet<T> DbSet<T>( [CallerMemberName] string? name = default ) => new(
@@ -32,6 +34,19 @@ public abstract class LiteDbContext : IAsyncDisposable
         if( !cancellation.IsCancellationRequested )
         {
             await cancellation.CancelAsync();
+        }
+
+        if( worker is not null )
+        {
+            try
+            {
+                await worker;
+            }
+            catch( OperationCanceledException ) { }
+            finally
+            {
+                worker = default;
+            }
         }
 
         cancellation.Dispose();
