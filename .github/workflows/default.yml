@@ -66,6 +66,10 @@ jobs:
         run: dotnet test test\LiteDbContext.Tests.csproj -f net9.0 --no-restore --results-directory TestResults/net9.0 --logger "trx;logFileName=$($project.BaseName).trx" --collect:"XPlat Code Coverage" /p:WarningLevel=0 -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.DeterministicReport=true
         shell: pwsh
 
+      - name: Run tests (net10.0)
+        run: dotnet test test\LiteDbContext.Tests.csproj -f net10.0 --no-restore --results-directory TestResults/net10.0 --logger "trx;logFileName=$($project.BaseName).trx" --collect:"XPlat Code Coverage" /p:WarningLevel=0 -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.DeterministicReport=true
+        shell: pwsh
+
       - name: Upload artifact 'test-results'
         uses: actions/upload-artifact@v6
         if: success() || failure()
