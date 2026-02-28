@@ -4,9 +4,9 @@
     "net10.0": {
       "LiteDB": {
         "type": "Direct",
-        "requested": "[6.0.0-prerelease.75, )",
-        "resolved": "6.0.0-prerelease.75",
-        "contentHash": "OOfI8IqcrreYUGpPc0M2E3UzCQ0XwuSzP0Y2YEO3jWDzzF0N7mbDbjjGRS+iH91OlD9vgSj8+8y/6V6E/F2Ksg=="
+        "requested": "[6.0.0-prerelease.77, )",
+        "resolved": "6.0.0-prerelease.77",
+        "contentHash": "hxFhbAyP1oWRWMhVHNIMdGqGFHqwfsUfNYsU8BK9MFJb+9lGnwDmyXGse+aY0msY+Lm3EdOzdZ/qn6M6U1ezrQ=="
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
@@ -76,9 +76,9 @@
     "net8.0": {
       "LiteDB": {
         "type": "Direct",
-        "requested": "[6.0.0-prerelease.75, )",
-        "resolved": "6.0.0-prerelease.75",
-        "contentHash": "OOfI8IqcrreYUGpPc0M2E3UzCQ0XwuSzP0Y2YEO3jWDzzF0N7mbDbjjGRS+iH91OlD9vgSj8+8y/6V6E/F2Ksg=="
+        "requested": "[6.0.0-prerelease.77, )",
+        "resolved": "6.0.0-prerelease.77",
+        "contentHash": "hxFhbAyP1oWRWMhVHNIMdGqGFHqwfsUfNYsU8BK9MFJb+9lGnwDmyXGse+aY0msY+Lm3EdOzdZ/qn6M6U1ezrQ=="
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
@@ -148,9 +148,9 @@
     "net9.0": {
       "LiteDB": {
         "type": "Direct",
-        "requested": "[6.0.0-prerelease.75, )",
-        "resolved": "6.0.0-prerelease.75",
-        "contentHash": "OOfI8IqcrreYUGpPc0M2E3UzCQ0XwuSzP0Y2YEO3jWDzzF0N7mbDbjjGRS+iH91OlD9vgSj8+8y/6V6E/F2Ksg=="
+        "requested": "[6.0.0-prerelease.77, )",
+        "resolved": "6.0.0-prerelease.77",
+        "contentHash": "hxFhbAyP1oWRWMhVHNIMdGqGFHqwfsUfNYsU8BK9MFJb+9lGnwDmyXGse+aY0msY+Lm3EdOzdZ/qn6M6U1ezrQ=="
       },
       "Microsoft.CodeAnalysis.NetAnalyzers": {
         "type": "Direct",
