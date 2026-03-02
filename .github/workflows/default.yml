@@ -1,4 +1,4 @@
-﻿name: default
+name: default
 
 env:
   DOTNET_NOLOGO: true
@@ -86,7 +86,7 @@ jobs:
           reporter: dotnet-trx
 
       - name: Generate coverage results
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.1
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.2
         with:
           reports: TestResults/**/coverage.cobertura.xml
           reporttypes: "Cobertura;MarkdownSummary"
