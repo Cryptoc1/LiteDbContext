@@ -1,8 +1,8 @@
-using LiteDB;
+﻿using LiteDB;
 
 namespace LiteDbContext.Tests;
 
-public sealed class TestDbContext( LiteDbOptions options ) : LiteDB.LiteDbContext( options )
+public sealed class TestDbContext( LiteDbOptions<TestDbContext> options ) : LiteDB.LiteDbContext( options )
 {
     public LiteDbSet<TestEntity> Tests => DbSet<TestEntity>();
 }

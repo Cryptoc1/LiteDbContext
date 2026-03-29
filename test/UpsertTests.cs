@@ -1,4 +1,4 @@
-using LiteDB;
+﻿using LiteDB;
 
 namespace LiteDbContext.Tests;
 
@@ -7,7 +7,7 @@ public sealed class UpsertTests
     [Fact]
     public async Task Upsert_Adds( )
     {
-        var options = new LiteDbOptions
+        var options = new LiteDbOptions<TestDbContext>
         {
             ConnectionString = $"{Directory.GetCurrentDirectory()}/tests_{Guid.NewGuid()}.db"
         };

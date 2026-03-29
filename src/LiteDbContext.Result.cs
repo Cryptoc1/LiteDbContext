@@ -1,5 +1,7 @@
-using System.Buffers;
+﻿using System.Buffers;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Threading.Channels;
 
 namespace LiteDB;
@@ -28,17 +30,18 @@ internal sealed class LiteDbResult<T>( ILiteQueryableResult<T> result, DbWorkQue
 
     public ChannelReader<BsonValue> ExecuteReader( CancellationToken cancellation = default )
     {
-        var channel = Channel.CreateUnbounded<BsonValue>( new()
+        var channel = Channel.CreateBounded<BsonValue>( new BoundedChannelOptions( Environment.ProcessorCount * 2 )
         {
+            FullMode = BoundedChannelFullMode.Wait,
             SingleWriter = true,
         } );
 
-        queue.InvokeAsync( async cancellation =>
+        _ = queue.InvokeAsync( async cancellation =>
         {
             using var reader = result.ExecuteReader();
             while( reader.Read() )
             {
-                await channel.Writer.WriteAsync( reader.Current, cancellation );
+                await channel.Writer.WriteAsync( reader.Current, cancellation ).ConfigureAwait( false );
             }
         }, cancellation ).ContinueWith( _ => channel.Writer.Complete( _.Exception ), CancellationToken.None );
 
@@ -114,32 +117,45 @@ public static class LiteDbResultExtensions
     {
         ArgumentNullException.ThrowIfNull( result );
 
-        var buffer = ArrayPool<T>.Shared.Rent( 10 );
-        var count = 0;
-
-        await foreach( var value in result.ToAsyncEnumerable( cancellation ) )
+        var buffer = ArrayPool<T>.Shared.Rent( Environment.ProcessorCount * 4 );
+        try
         {
-            if( count == buffer.Length )
+            var count = 0;
+            await foreach( var value in result.ToAsyncEnumerable( cancellation ) )
             {
-                Resize( ref buffer, count );
+                if( count == buffer.Length )
+                {
+                    Resize( ref buffer, count );
+                }
+
+                buffer[ count++ ] = value;
             }
 
-            buffer[ count++ ] = value;
+            var values = new T[ count ];
+
+            Array.Copy( buffer, values, count );
+            return values;
         }
-
-        var values = new T[ count ];
-        Array.Copy( buffer, values, count );
-
-        ArrayPool<T>.Shared.Return( buffer );
-        return values;
+        finally
+        {
+            ArrayPool<T>.Shared.Return( buffer );
+        }
 
         static void Resize( ref T[] buffer, int count )
         {
             var resized = ArrayPool<T>.Shared.Rent( buffer.Length + (buffer.Length >> 1) );
-            Array.Copy( buffer, resized, count );
+            try
+            {
+                Array.Copy( buffer, resized, count );
+                ArrayPool<T>.Shared.Return( buffer );
 
-            ArrayPool<T>.Shared.Return( buffer );
-            buffer = resized;
+                buffer = resized;
+            }
+            catch
+            {
+                ArrayPool<T>.Shared.Return( resized );
+                throw;
+            }
         }
     }
 
@@ -157,12 +173,13 @@ public static class LiteDbResultExtensions
     {
         ArgumentNullException.ThrowIfNull( result );
 
-        var values = new List<T>();
+        var values = new List<T>( Environment.ProcessorCount * 4 );
         await foreach( var value in result.ToAsyncEnumerable( cancellation ) )
         {
             values.Add( value );
         }
 
+        values.TrimExcess();
         return values;
     }
 }

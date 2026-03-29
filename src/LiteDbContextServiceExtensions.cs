@@ -1,4 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -9,12 +10,16 @@ namespace LiteDB.Extensions.DependencyInjection;
 
 public static class LiteDbContextServiceExtensions
 {
+    [RequiresDynamicCode( "Configuration binding and validation may require access to members that are not statically referenced." )]
+    [RequiresUnreferencedCode( "Configuration binding and validation may require access to members that are not statically referenced." )]
     public static IServiceCollection AddLiteDbContext<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties )] TContext>( this IServiceCollection services, Action<LiteDbOptions>? configure = default )
         where TContext : LiteDbContext
     {
         ArgumentNullException.ThrowIfNull( services );
 
         var options = services.AddOptions<LiteDbOptions<TContext>>()
+            .BindConfiguration( $"LiteDB:{typeof( TContext ).Name}" )
+            .Configure<IConfiguration>( ConfigureConnectionString )
             .Validate( options => !string.IsNullOrEmpty( options.ConnectionString ), "A connection string is required!" );
 
         if( configure is not null )
@@ -29,5 +34,18 @@ public static class LiteDbContextServiceExtensions
         } );
 
         return services;
+
+        static void ConfigureConnectionString( LiteDbOptions options, IConfiguration configuration )
+        {
+            ArgumentNullException.ThrowIfNull( options );
+            ArgumentNullException.ThrowIfNull( configuration );
+
+            if( !string.IsNullOrEmpty( options.ConnectionString ) )
+            {
+                return;
+            }
+
+            options.ConnectionString = configuration.GetConnectionString( typeof( TContext ).Name )!;
+        }
     }
 }

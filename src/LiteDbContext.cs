@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace LiteDB;
 
@@ -8,28 +8,54 @@ public abstract class LiteDbContext : IAsyncDisposable
     private readonly LiteDatabase database;
     private readonly DbWorkQueue queue;
 
-    public BsonMapper Mapper => database.Mapper;
-
+    private bool disposed;
     private Task? worker;
+
+    public BsonMapper Mapper => database.Mapper;
 
     protected LiteDbContext( LiteDbOptions options )
     {
+        ArgumentNullException.ThrowIfNull( options );
+
+        database = CreateDatabase( options );
         queue = new();
-        database = new( options.ConnectionString, options.Mapper )
+        worker = Task.Run( ( ) => ProcessWorkQueue( queue, cancellation.Token ), cancellation.Token );
+    }
+
+    private LiteDatabase CreateDatabase( LiteDbOptions options )
+    {
+        var mapper = new BsonMapper()
+        {
+            EnumAsInteger = true
+        };
+
+        mapper.ConfigureDates()
+            .ConfigureJson()
+            .ConfigureTime()
+            .ConfigureUris();
+
+        OnCreatingMapper( mapper );
+        var database = new LiteDatabase( options.ConnectionString, mapper )
         {
             UtcDate = true,
         };
 
-        options.OnCreating?.Invoke( database );
-        worker = Task.Run( ( ) => ProcessWorkQueue( queue, cancellation.Token ), cancellation.Token );
+        OnCreatingDatabase( database );
+        return database;
     }
 
-    protected LiteDbSet<T> DbSet<T>( [CallerMemberName] string? name = default ) => new(
-        database.GetCollection<T>( name ),
-        queue );
+    protected LiteDbSet<T> DbSet<T>( [CallerMemberName] string? name = default )
+    {
+        ObjectDisposedException.ThrowIf( disposed, this );
+
+        var collection = database.GetCollection<T>( name );
+        return new( collection, queue );
+    }
 
     public async ValueTask DisposeAsync( )
     {
+        disposed = true;
+
         await DisposeAsyncCore();
         if( !cancellation.IsCancellationRequested )
         {
@@ -40,9 +66,9 @@ public abstract class LiteDbContext : IAsyncDisposable
         {
             try
             {
-                await worker;
+                await worker.ConfigureAwait( false );
             }
-            catch( OperationCanceledException ) { }
+            catch( OperationCanceledException e ) when( e.CancellationToken == cancellation.Token ) { }
             finally
             {
                 worker = default;
@@ -57,6 +83,14 @@ public abstract class LiteDbContext : IAsyncDisposable
 
     protected virtual ValueTask DisposeAsyncCore( ) => default;
 
+    protected virtual void OnCreatingDatabase( LiteDatabase database )
+    {
+    }
+
+    protected virtual void OnCreatingMapper( BsonMapper mapper )
+    {
+    }
+
     private static async Task ProcessWorkQueue( DbWorkQueue queue, CancellationToken cancellation )
     {
         ArgumentNullException.ThrowIfNull( queue );
@@ -67,8 +101,6 @@ public abstract class LiteDbContext : IAsyncDisposable
             if( work is not null )
             {
                 await work.Invoke( cancellation ).ConfigureAwait( false );
-
-                await Task.Yield();
             }
         }
     }

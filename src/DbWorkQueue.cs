@@ -1,19 +1,22 @@
+﻿using System.Runtime.CompilerServices;
 using System.Threading.Channels;
 
 namespace LiteDB;
 
 internal sealed class DbWorkQueue
 {
-    private readonly Channel<DbWork> queue = Channel.CreateUnbounded<DbWork>( new()
+    private readonly Channel<DbWork> queue = Channel.CreateBounded<DbWork>( new BoundedChannelOptions( Environment.ProcessorCount * 4 )
     {
-        SingleReader = true
+        FullMode = BoundedChannelFullMode.Wait,
+        SingleReader = true,
+        SingleWriter = false,
     } );
 
     public async Task InvokeAsync( Func<CancellationToken, ValueTask> work, CancellationToken cancellation )
     {
         ArgumentNullException.ThrowIfNull( work );
 
-        var completion = new TaskCompletionSource();
+        var completion = new TaskCompletionSource( TaskCreationOptions.RunContinuationsAsynchronously );
         await queue.WriteAsync( async cancellation =>
         {
             try
@@ -27,7 +30,7 @@ internal sealed class DbWorkQueue
             }
         }, cancellation );
 
-        using( cancellation.Register( ( ) => completion.TrySetCanceled( cancellation ) ) )
+        await using( cancellation.Register( ( ) => completion.TrySetCanceled( cancellation ) ) )
         {
             await completion.Task.ConfigureAwait( false );
         }
@@ -37,13 +40,13 @@ internal sealed class DbWorkQueue
     {
         ArgumentNullException.ThrowIfNull( work );
 
-        var completion = new TaskCompletionSource<T>();
+        var completion = new TaskCompletionSource<T>( TaskCreationOptions.RunContinuationsAsynchronously );
         await queue.WriteAsync( async cancellation =>
         {
             try
             {
-                completion.SetResult(
-                    await work( cancellation ).ConfigureAwait( false ) );
+                var result = await work( cancellation ).ConfigureAwait( false );
+                completion.SetResult( result );
             }
             catch( Exception e )
             {
@@ -51,7 +54,7 @@ internal sealed class DbWorkQueue
             }
         }, cancellation );
 
-        using( cancellation.Register( ( ) => completion.TrySetCanceled( cancellation ) ) )
+        await using( cancellation.Register( ( ) => completion.TrySetCanceled( cancellation ) ) )
         {
             return await completion.Task.ConfigureAwait( false );
         }
@@ -84,18 +87,19 @@ internal static class DbWorkChannelExtensions
 
 internal static class DbWorkQueueExtensions
 {
-    public static IAsyncEnumerable<T> EnumerateAsync<T>( this DbWorkQueue queue, Func<IEnumerable<T>> factory, CancellationToken cancellation )
+    public static async IAsyncEnumerable<T> EnumerateAsync<T>( this DbWorkQueue queue, Func<IEnumerable<T>> factory, [EnumeratorCancellation] CancellationToken cancellation )
     {
         ArgumentNullException.ThrowIfNull( queue );
         ArgumentNullException.ThrowIfNull( factory );
 
-        var channel = Channel.CreateUnbounded<T>( new()
+        var channel = Channel.CreateBounded<T>( new BoundedChannelOptions( Environment.ProcessorCount * 2 )
         {
+            FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true,
             SingleWriter = true,
         } );
 
-        queue.InvokeAsync( async cancellation =>
+        var writer = queue.InvokeAsync( async cancellation =>
         {
             foreach( var value in factory() )
             {
@@ -103,7 +107,17 @@ internal static class DbWorkQueueExtensions
             }
         }, cancellation ).ContinueWith( _ => channel.Writer.Complete( _.Exception ), CancellationToken.None );
 
-        return channel.Reader.ReadAllAsync( cancellation );
+        await foreach( var value in channel.Reader.ReadAllAsync( cancellation ).ConfigureAwait( false ) )
+        {
+            yield return value;
+
+            if( writer.IsFaulted )
+            {
+                break;
+            }
+        }
+
+        await writer.ConfigureAwait( false );
     }
 
     public static Task InvokeAsync( this DbWorkQueue queue, Action work, CancellationToken cancellation )
@@ -114,7 +128,7 @@ internal static class DbWorkQueueExtensions
         return queue.InvokeAsync( _ =>
         {
             work();
-            return ValueTask.CompletedTask;
+            return default;
         }, cancellation );
     }
 
@@ -123,6 +137,6 @@ internal static class DbWorkQueueExtensions
         ArgumentNullException.ThrowIfNull( queue );
         ArgumentNullException.ThrowIfNull( work );
 
-        return queue.InvokeAsync( _ => ValueTask.FromResult( work() ), cancellation );
+        return queue.InvokeAsync<T>( _ => new( work() ), cancellation );
     }
 }
