@@ -55,9 +55,8 @@ public abstract class LiteDbContext : IAsyncDisposable
     public async ValueTask DisposeAsync( )
     {
         disposed = true;
-        await DisposeAsyncCore();
 
-        await queue.DisposeAsync();
+        await DisposeAsyncCore();
         if( !cancellation.IsCancellationRequested )
         {
             await cancellation.CancelAsync();

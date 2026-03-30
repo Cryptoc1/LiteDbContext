@@ -3,7 +3,7 @@ using System.Threading.Channels;
 
 namespace LiteDB;
 
-internal sealed class DbWorkQueue : IAsyncDisposable
+internal sealed class DbWorkQueue
 {
     private readonly Channel<DbWork> queue = Channel.CreateBounded<DbWork>( new BoundedChannelOptions( Environment.ProcessorCount * 4 )
     {
@@ -11,12 +11,6 @@ internal sealed class DbWorkQueue : IAsyncDisposable
         SingleReader = true,
         SingleWriter = false,
     } );
-
-    public async ValueTask DisposeAsync( )
-    {
-        queue.Writer.Complete();
-        await queue.Reader.Completion.ConfigureAwait( false );
-    }
 
     public async Task InvokeAsync( Func<CancellationToken, ValueTask> work, CancellationToken cancellation )
     {
