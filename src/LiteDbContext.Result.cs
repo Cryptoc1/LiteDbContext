@@ -30,7 +30,7 @@ internal sealed class LiteDbResult<T>( ILiteQueryableResult<T> result, DbWorkQue
 
     public ChannelReader<BsonValue> ExecuteReader( CancellationToken cancellation = default )
     {
-        var channel = Channel.CreateBounded<BsonValue>( new BoundedChannelOptions( Environment.ProcessorCount * 2 )
+        var channel = Channel.CreateBounded<BsonValue>( new BoundedChannelOptions( Environment.ProcessorCount * 4 )
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleWriter = true,

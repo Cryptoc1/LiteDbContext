@@ -92,7 +92,7 @@ internal static class DbWorkQueueExtensions
         ArgumentNullException.ThrowIfNull( queue );
         ArgumentNullException.ThrowIfNull( factory );
 
-        var channel = Channel.CreateBounded<T>( new BoundedChannelOptions( Environment.ProcessorCount * 2 )
+        var channel = Channel.CreateBounded<T>( new BoundedChannelOptions( Environment.ProcessorCount * 4 )
         {
             FullMode = BoundedChannelFullMode.Wait,
             SingleReader = true,
