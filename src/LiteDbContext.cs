@@ -35,12 +35,13 @@ public abstract class LiteDbContext : IAsyncDisposable
             .ConfigureUris();
 
         OnCreatingMapper( mapper );
+
         var database = new LiteDatabase( options.ConnectionString, mapper )
         {
             UtcDate = true,
         };
 
-        OnCreatingDatabase( database );
+        OnCreatedDatabase( database );
         return database;
     }
 
@@ -83,7 +84,7 @@ public abstract class LiteDbContext : IAsyncDisposable
 
     protected virtual ValueTask DisposeAsyncCore( ) => default;
 
-    protected virtual void OnCreatingDatabase( LiteDatabase database )
+    protected virtual void OnCreatedDatabase( LiteDatabase database )
     {
     }
 
