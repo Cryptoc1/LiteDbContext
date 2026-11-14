@@ -22,6 +22,7 @@
     <NoWarn>$(NoWarn);CS8618</NoWarn>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+    <TargetSdkVersion>11.0.100</TargetSdkVersion>
 
     <!-- Disable legacy analyzers and enable NET/Roslyn analyzers -->
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -54,7 +55,7 @@
   <ItemGroup>
     <PackageReference Include="MinVer" Version="8.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.13" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.*-*" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(TargetSdkVersion)" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
