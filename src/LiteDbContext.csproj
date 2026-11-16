@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiteDB" Version="6.0.0-prerelease.322" />
+    <PackageReference Include="LiteDB" Version="6.0.0-prerelease.355" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
